@@ -1,0 +1,1 @@
+DATA_FILE_EXTENSION: str = ".csv.gz" # G-zip CSV
