@@ -1,4 +1,4 @@
-DATA_FILE_EXTENSION: str = ".csv.gz" # G-zip CSV
+DATA_FILE_EXTENSION: str = "csv.gz" # G-zip CSV
 
 AVAILABLE_SYMBOLS: list = [
     "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADCHF", "EURAUD",
@@ -7,3 +7,10 @@ AVAILABLE_SYMBOLS: list = [
     "USDCAD", "USDCHF", "USDJPY", "AUDUSD", "CADJPY", "GBPCAD",
     "USDTRY", "EURNZD"
 ]
+
+BASE_URL: str = "fxcorporate.com"
+
+class Subdomain:
+    TICK: str = "tickdata"
+    CANDLE: str = "candledata"
+    OHLC: str = "candledata"
