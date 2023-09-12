@@ -9,7 +9,7 @@ with open(file="README.md", mode="r") as f:
     LONG_DESCRIPTION: str = f.read()
 print(LONG_DESCRIPTION)
 
-# Setting up
+# Setting up the package
 setup(
     # the name must match the folder name 'verysimplemodule'
     name="fx",
