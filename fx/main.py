@@ -6,8 +6,6 @@ import pandas as pd
 
 
 class Data:
-
-
     # TODO: Init with instrument + check
     # TODO: Scraper and store g-zip into a folder
         # In case of multiple files, lauch multiple threads
@@ -17,16 +15,15 @@ class Data:
 
     @staticmethod
     def getTickData(pair: str, yr: Union[str, int], wk: Union[str, int]):
+        config_: Config = Config(pair, yr, wk, DataType.TICK)
+        config_.setUrl()
+        q = Data._getRequestedArchive(config=config_)
         pass
 
     @staticmethod
     def getCandleData(pair: str, yr: Union[str, int], wk: Union[str, int]):
         pass
 
-    @staticmethod
-    def getData(ins: str, yr: Union[str, int], wk: Union[str, int]):
-        url: str = f"https://{URL.TICK}/{ins}/{yr}/{wk}.{DATA_FILE_EXTENSION}"
-        return a(url)
 
     # TODO: Add scraper for tick data
     # Parameters: Week + Year
@@ -36,11 +33,18 @@ class Data:
     # Or scraper for a specific week given a specific day
 
     @staticmethod
-    def a(url: str = "") -> pd.DataFrame:
-        if not isinstance(url, str) or len(url) <= 10:
-            raise Exception("Please enter a valid URL.")
+    def _getRequestedArchive(config: Config) -> pd.DataFrame:
+        if not isinstance(config, Config):
+            raise Exception("Please enter a valid config.")
 
-        req = requests.get(url)
-        if req.status_code//100 != 2:
+        url: str = config.url
+        req = requests.get(url=url, stream=True)
+        if req.status_code // 100 != 2:
             raise Exception("Error while requesting data")
+
+        req.raw.decode_content = True
+        f_in = gzip.GzipFile(fileobj=req.raw)
+        with open(f"{config.pair}_{config.yr}_{config.wk}.csv", 'wb') as f_out:
+            shutil.copyfileobj(f_in, f_out)
+        a = f_in.read()
         return req.status_code
