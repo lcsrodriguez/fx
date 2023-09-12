@@ -1,6 +1,11 @@
-DATA_FILE_EXTENSION: str = "csv.gz" # G-zip CSV
+from typing import List, Generator, Iterable
+from datetime import datetime
 
-AVAILABLE_SYMBOLS: list = [
+DATA_FILE_EXTENSION: str = "csv.gz"  # G-zip CSV
+BASE_URL: str = "fxcorporate.com"
+
+# See list: https://fxcm-api.readthedocs.io/en/latest/marketdata.html#tickdata
+AVAILABLE_SYMBOLS: List[str] = [
     "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADCHF", "EURAUD",
     "EURCHF", "EURGBP", "EURJPY", "EURUSD", "GBPCHF", "GBPJPY",
     "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD",
@@ -8,9 +13,15 @@ AVAILABLE_SYMBOLS: list = [
     "USDTRY", "EURNZD"
 ]
 
-BASE_URL: str = "fxcorporate.com"
 
-class Subdomain:
-    TICK: str = "tickdata"
-    CANDLE: str = "candledata"
-    OHLC: str = "candledata"
+class Url:
+    TICK: str = f"tickdata.{BASE_URL}"
+    CANDLE: str = f"candledata.{BASE_URL}"
+    OHLC: str = f"candledata.{BASE_URL}"
+
+
+# See limits: https://fxcm-api.readthedocs.io/en/latest/marketdata.html#tickdata
+class TimeRange:
+    TICK: List[str] = [str(e) for e in range(2015, datetime.now().year + 1)]
+    CANDLE: List[str] = [str(e) for e in range(2012, datetime.now().year + 1)]
+
