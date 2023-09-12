@@ -1,5 +1,6 @@
 from typing import List, Generator, Iterable
 from datetime import datetime
+from enum import Enum
 
 DATA_FILE_EXTENSION: str = "csv.gz"  # G-zip CSV
 BASE_URL: str = "fxcorporate.com"
@@ -14,10 +15,14 @@ AVAILABLE_SYMBOLS: List[str] = [
 ]
 
 
+class DataType(Enum):
+    TICK: int = 0
+    CANDLE: int = 1
+
+
 class Url:
     TICK: str = f"tickdata.{BASE_URL}"
     CANDLE: str = f"candledata.{BASE_URL}"
-    OHLC: str = f"candledata.{BASE_URL}"
 
 
 # See limits: https://fxcm-api.readthedocs.io/en/latest/marketdata.html#tickdata
