@@ -3,6 +3,36 @@ from typing import Union
 from abc import ABC, abstractmethod
 import requests
 import pandas as pd
+import gzip
+import shutil
+
+
+class Config:
+    __slots__ = ("pair", "yr", "wk", "type", "url_")
+
+    def __init__(self,
+                 _pair: str,
+                 _yr: Union[str, int],
+                 _wk: Union[str, int],
+                 _type: str = DataType.TICK) -> None:
+        self.pair: str = _pair
+        self.yr: Union[str, int] = _yr
+        self.wk: Union[str, int] = _wk
+        self.type: str = _type
+        self.url_: str = ""
+
+    def setUrl(self) -> None:
+        if self.type == DataType.TICK:
+            dom_: str = Url.TICK
+        elif self.type == DataType.CANDLE:
+            dom_: str = Url.CANDLE
+        self.url_: str = f"https://{dom_}/{self.pair}/{self.yr}/{self.wk}.{DATA_FILE_EXTENSION}"
+        print(self.url_)
+
+    def getUrl(self) -> str:
+        return self.url_
+
+    url = property(fget=getUrl, fset=setUrl)
 
 
 class Data:
