@@ -34,6 +34,9 @@ class Config:
 
     url = property(fget=getUrl, fset=setUrl)
 
+    def getFilename(self) -> str:
+        return f"{self.pair}_{self.yr}_{self.wk}"
+
 
 class Data:
     # TODO: Init with instrument + check
@@ -72,9 +75,15 @@ class Data:
         if req.status_code // 100 != 2:
             raise Exception("Error while requesting data")
 
+        # Downloading .csv.gz (archived file)
+        with open(f"{config.getFilename()}.csv.gz", 'wb') as f:
+            for chunk in req.raw.stream(1024, decode_content=False):
+                if chunk:
+                    f.write(chunk)
+
         req.raw.decode_content = True
         f_in = gzip.GzipFile(fileobj=req.raw)
-        with open(f"{config.pair}_{config.yr}_{config.wk}.csv", 'wb') as f_out:
+        with open(f"{config.getFilename()}", 'wb') as f_out:
             shutil.copyfileobj(f_in, f_out)
         a = f_in.read()
         return req.status_code
