@@ -1,23 +1,20 @@
-from typing import List, Generator, Iterable
+from typing import List, Dict
 from datetime import datetime
 from enum import Enum
 
 DATA_FILE_EXTENSION: str = "csv.gz"  # G-zip CSV
 BASE_URL: str = "fxcorporate.com"
 
-# See list: https://fxcm-api.readthedocs.io/en/latest/marketdata.html#tickdata
-AVAILABLE_SYMBOLS: List[str] = [
-    "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADCHF", "EURAUD",
-    "EURCHF", "EURGBP", "EURJPY", "EURUSD", "GBPCHF", "GBPJPY",
-    "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD",
-    "USDCAD", "USDCHF", "USDJPY", "AUDUSD", "CADJPY", "GBPCAD",
-    "USDTRY", "EURNZD"
-]
+
+class Frequency:
+    MINUTE: str = "m1"
+    HOUR: str = "H1"
+    DAY: str = "D1"
 
 
 class DataType(Enum):
-    TICK: int = 0
-    CANDLE: int = 1
+    TICK: int = "TICK"
+    CANDLE: int = "CANDLE"
 
 
 class Url:
@@ -30,3 +27,18 @@ class TimeRange:
     TICK: List[str] = [str(e) for e in range(2015, datetime.now().year + 1)]
     CANDLE: List[str] = [str(e) for e in range(2012, datetime.now().year + 1)]
 
+
+# See list: https://fxcm-api.readthedocs.io/en/latest/marketdata.html#tickdata
+AVAILABLE_SYMBOLS: Dict[DataType, List[str]] = {
+    DataType.TICK: [
+        "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADCHF", "EURAUD",
+        "EURCHF", "EURGBP", "EURJPY", "EURUSD", "GBPCHF", "GBPJPY",
+        "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD",
+        "USDCAD", "USDCHF", "USDJPY", "AUDUSD", "CADJPY", "GBPCAD",
+        "USDTRY", "EURNZD"],
+    DataType.CANDLE: [
+        "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADCHF", "EURAUD",
+        "EURCHF", "EURGBP", "EURJPY", "EURUSD", "GBPCHF", "GBPJPY",
+        "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD",
+        "USDCAD", "USDCHF", "USDJPY"]
+}
