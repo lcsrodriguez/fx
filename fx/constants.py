@@ -4,8 +4,8 @@ from enum import Enum
 
 DATA_FILE_EXTENSION: str = "csv.gz"  # G-zip CSV
 BASE_URL: str = "fxcorporate.com"
-OHLC = ["o", "h", "l", "c"]
-
+OHLC: list = ["o", "h", "l", "c"]
+OUT_FOLDER: str = "out"
 
 class Frequency:
     MINUTE: str = "m1"
@@ -18,15 +18,17 @@ class DataType(Enum):
     CANDLE: int = "CANDLE"
 
 
-class Url:
-    TICK: str = f"tickdata.{BASE_URL}"
-    CANDLE: str = f"candledata.{BASE_URL}"
+url: dict = {
+    DataType.TICK: f"tickdata.{BASE_URL}",
+    DataType.CANDLE: f"candledata.{BASE_URL}"
+}
 
 
 # See limits: https://fxcm-api.readthedocs.io/en/latest/marketdata.html#tickdata
-class TimeRange:
-    TICK: List[str] = [str(e) for e in range(2015, datetime.now().year + 1)]
-    CANDLE: List[str] = [str(e) for e in range(2012, datetime.now().year + 1)]
+timeRange: dict = {
+    DataType.TICK: [str(e) for e in range(2015, datetime.now().year + 1)],
+    DataType.CANDLE: [str(e) for e in range(2012, datetime.now().year + 1)]
+}
 
 
 # See list: https://fxcm-api.readthedocs.io/en/latest/marketdata.html#tickdata
