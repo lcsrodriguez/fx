@@ -4,7 +4,8 @@ import requests
 import pandas as pd
 import gzip
 import shutil
-
+import glob
+import os
 
 class Config:
     __slots__ = ("pair", "yr", "wk", "type", "url_", "fq")
@@ -61,13 +62,18 @@ class Data:
         self.keepGZIP: bool = _keepGZIP
         self.castDatatime: bool = _castDatetime
 
-    def __del__(self) -> None:
+    def _handleIntemediaryFiles(self) -> None:
         if not self.keepCSV:
-            # TODO: Remove CSV
-            pass
+            fs = glob.glob("*.csv")
+            for f in fs:
+                os.remove(f)
         if not self.keepGZIP:
-            # TODO: Remove GZIP
-            pass
+            fs = glob.glob("*.gz")
+            for f in fs:
+                os.remove(f)
+
+    def __del__(self) -> None:
+        self._handleIntemediaryFiles()
 
     def getTickData(self, pair: str, yr: Union[str, int], wk: Union[str, int]) -> pd.DataFrame:
         config_: Config = Config(pair, yr, wk, DataType.TICK)
