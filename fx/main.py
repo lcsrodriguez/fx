@@ -51,12 +51,15 @@ class Data:
     # TODO: Generate a new folder (hex) into /usr/tmp/
     # TODO: Store g-zip and launch a process to unzip each archive
     # Once unzipped, merging
+    __slots__ = ("keepCSV", "keepGZIP", "castDatatime")
 
     def __init__(self,
                  _keepCSV: bool = True,
-                 _keepGZIP: bool = False) -> None:
+                 _keepGZIP: bool = False,
+                 _castDatetime: bool = False) -> None:
         self.keepCSV: bool = _keepCSV
         self.keepGZIP: bool = _keepGZIP
+        self.castDatatime: bool = _castDatetime
 
     def __del__(self) -> None:
         if not self.keepCSV:
@@ -69,14 +72,14 @@ class Data:
     def getTickData(self, pair: str, yr: Union[str, int], wk: Union[str, int]) -> pd.DataFrame:
         config_: Config = Config(pair, yr, wk, DataType.TICK)
         config_.setUrl()
-        q = Data._getRequestedArchive(config=config_)
+        q = self._getDataFrame(config=config_)
         q.columns = ["dt", "b", "a"]
         return q
 
-    def getCandleData(self, pair: str, yr: Union[str, int], wk: Union[str, int], fq: Frequency) -> pd.DataFrame:
+    def getCandleData(self, pair: str, yr: Union[str, int], wk: Union[str, int], fq: str) -> pd.DataFrame:
         config_: Config = Config(pair, yr, wk, DataType.CANDLE, _fq=fq)
         config_.setUrl()
-        q = Data._getRequestedArchive(config=config_)
+        q = self._getDataFrame(config=config_)
         q.columns = ["dt", *[f"b{sym}" for sym in OHLC], *[f"a{sym}" for sym in OHLC]]
         return q
 
@@ -87,8 +90,7 @@ class Data:
     # Scraper with string (YYYY-W to ...)
     # Or scraper for a specific week given a specific day
 
-    @staticmethod
-    def _getRequestedArchive(config: Config) -> pd.DataFrame:
+    def _getDataFrame(self, config: Config) -> pd.DataFrame:
         if not isinstance(config, Config):
             raise Exception("Please enter a valid config.")
 
@@ -123,5 +125,6 @@ class Data:
         df = pd.read_csv(filepath_or_buffer=f"{config.getFilename()}.csv",
                          sep=",",
                          on_bad_lines='skip')
-        #df["DateTime"] = pd.to_datetime(df["DateTime"], format="%m-%d-%Y %H:%M:%S.%f")
+        if self.castDatatime:
+            df["DateTime"] = pd.to_datetime(df["DateTime"], format="%m-%d-%Y %H:%M:%S.%f")
         return df
