@@ -4,7 +4,7 @@ from enum import Enum
 
 DATA_FILE_EXTENSION: str = "csv.gz"  # G-zip CSV
 BASE_URL: str = "fxcorporate.com"
-
+OHLC = ["o", "h", "l", "c"]
 
 class Frequency:
     MINUTE: str = "m1"

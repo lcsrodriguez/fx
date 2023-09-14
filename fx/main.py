@@ -52,19 +52,32 @@ class Data:
     # TODO: Store g-zip and launch a process to unzip each archive
     # Once unzipped, merging
 
-    @staticmethod
-    def getTickData(pair: str, yr: Union[str, int], wk: Union[str, int]) -> pd.DataFrame:
+    def __init__(self,
+                 _keepCSV: bool = True,
+                 _keepGZIP: bool = False) -> None:
+        self.keepCSV: bool = _keepCSV
+        self.keepGZIP: bool = _keepGZIP
+
+    def __del__(self) -> None:
+        if not self.keepCSV:
+            # TODO: Remove CSV
+            pass
+        if not self.keepGZIP:
+            # TODO: Remove GZIP
+            pass
+
+    def getTickData(self, pair: str, yr: Union[str, int], wk: Union[str, int]) -> pd.DataFrame:
         config_: Config = Config(pair, yr, wk, DataType.TICK)
         config_.setUrl()
         q = Data._getRequestedArchive(config=config_)
-        q.columns = ["dt", "bid", "ask"]
+        q.columns = ["dt", "b", "a"]
         return q
 
-    @staticmethod
-    def getCandleData(pair: str, yr: Union[str, int], wk: Union[str, int], fq: Frequency) -> pd.DataFrame:
+    def getCandleData(self, pair: str, yr: Union[str, int], wk: Union[str, int], fq: Frequency) -> pd.DataFrame:
         config_: Config = Config(pair, yr, wk, DataType.CANDLE, _fq=fq)
         config_.setUrl()
         q = Data._getRequestedArchive(config=config_)
+        q.columns = ["dt", *[f"b{sym}" for sym in OHLC], *[f"a{sym}" for sym in OHLC]]
         return q
 
     # TODO: Add scraper for tick data
