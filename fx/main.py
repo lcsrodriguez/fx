@@ -1,6 +1,5 @@
 from .constants import *
 from typing import Union
-from abc import ABC, abstractmethod
 import requests
 import pandas as pd
 import gzip
@@ -51,7 +50,7 @@ class Data:
         config_: Config = Config(pair, yr, wk, DataType.TICK)
         config_.setUrl()
         q = Data._getRequestedArchive(config=config_)
-        pass
+        return q
 
     @staticmethod
     def getCandleData(pair: str, yr: Union[str, int], wk: Union[str, int]):
@@ -70,6 +69,7 @@ class Data:
         if not isinstance(config, Config):
             raise Exception("Please enter a valid config.")
 
+        # Constructing the URL
         url: str = config.url
         req = requests.get(url=url, stream=True)
         if req.status_code // 100 != 2:
@@ -80,10 +80,21 @@ class Data:
             for chunk in req.raw.stream(1024, decode_content=False):
                 if chunk:
                     f.write(chunk)
+        # Uncompressing .csv.gz into a .csv file (unprocessed CSV)
+        with gzip.open(f"{config.getFilename()}.csv.gz", 'rb') as f_in:
+            with open(f"{config.getFilename()}.csv", 'wb') as f_out:
+                shutil.copyfileobj(f_in, f_out)
 
-        req.raw.decode_content = True
-        f_in = gzip.GzipFile(fileobj=req.raw)
-        with open(f"{config.getFilename()}", 'wb') as f_out:
-            shutil.copyfileobj(f_in, f_out)
-        a = f_in.read()
-        return req.status_code
+        # Reading unprocessed/binary CSV file
+        fi = open(f"{config.getFilename()}.csv", 'rb')
+        data = fi.read()
+        fi.close()
+        # Processing + Writing CSV file
+        fo = open(f"{config.getFilename()}.csv", 'wb')
+        fo.write(data.replace(b'\x00', b''))
+        fo.close()
+        # Reading CSV file
+        df = pd.read_csv(filepath_or_buffer=f"{config.getFilename()}.csv",
+                         sep=",",
+                         on_bad_lines='skip')
+        return df
