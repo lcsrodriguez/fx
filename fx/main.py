@@ -113,7 +113,6 @@ class Data:
                     continue
                 print(f"Processing week {y}-{w}") #, end=" ")
                 d.append((y, w))
-                """
                 if len(THREADS_POOL) <= THREADS_POOL_LIMIT:
                     print(f"Processing week {y}-{w}", end=" ")
                     t = threading.Thread(target=self.getTickData,
@@ -129,19 +128,13 @@ class Data:
                     print(f"Waiting for joining")
                     _ = [t.join() for t in THREADS_POOL]
                     THREADS_POOL = []
-                #if (getNumberWeeksPerYear(y) == 53 and w == 53) or (getNumberWeeksPerYear(y) == 52 and w == 52):
-                #    break
-                #if w == rW[-1] and y == rY[-1]:
-                #    break
-            if not isLooping:
-                break
 
     def getTickData(self, pair: str, yr: Union[str, int], wk: Union[str, int]) -> pd.DataFrame:
         config_: Config = Config(pair, yr, wk, DataType.TICK)
         config_.setUrl()
         q = self._getDataFrame(config=config_)
-        q.columns = ["dt", "b", "a"]
-        return q
+        #q.columns = ["dt", "b", "a"]
+        return q  # (df, y, k) to be returned to store in results variable shared by all threads then sorted to be merged
 
     def getCandleData(self, pair: str, yr: Union[str, int], wk: Union[str, int], fq: str) -> pd.DataFrame:
         config_: Config = Config(pair, yr, wk, DataType.CANDLE, _fq=fq)
