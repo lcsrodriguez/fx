@@ -164,25 +164,28 @@ class Data:
                 if chunk:
                     f.write(chunk)
 
-        # Unzipping .csv.gz into a .csv file (unprocessed CSV)
-        with gzip.open(f"{OUT_FOLDER}/{config.getFilename()}.csv.gz", 'rb') as f_in:
-            with open(f"{OUT_FOLDER}/{config.getFilename()}.csv", 'wb') as f_out:
-                shutil.copyfileobj(f_in, f_out)
+        if p:
+            # Unzipping .csv.gz into a .csv file (unprocessed CSV)
+            with gzip.open(f"{OUT_FOLDER}/{config.getFilename()}.csv.gz", 'rb') as f_in:
+                with open(f"{OUT_FOLDER}/{config.getFilename()}.csv", 'wb') as f_out:
+                    shutil.copyfileobj(f_in, f_out)
 
-        # Reading unprocessed/binary CSV file
-        fi = open(f"{OUT_FOLDER}/{config.getFilename()}.csv", 'rb')
-        data = fi.read()
-        fi.close()
+            # Reading unprocessed/binary CSV file
+            fi = open(f"{OUT_FOLDER}/{config.getFilename()}.csv", 'rb')
+            data = fi.read()
+            fi.close()
 
-        # Processing + Writing CSV file
-        fo = open(f"{OUT_FOLDER}/{config.getFilename()}.csv", 'wb')
-        fo.write(data.replace(b'\x00', b''))
-        fo.close()
+            # Processing + Writing CSV file
+            fo = open(f"{OUT_FOLDER}/{config.getFilename()}.csv", 'wb')
+            fo.write(data.replace(b'\x00', b''))
+            fo.close()
 
-        # Reading CSV file
-        df = pd.read_csv(filepath_or_buffer=f"{OUT_FOLDER}/{config.getFilename()}.csv",
-                         sep=",",
-                         on_bad_lines='skip')
-        if self.castDatatime:
-            df["DateTime"] = pd.to_datetime(df["DateTime"], format="%m-%d-%Y %H:%M:%S.%f")
-        return df
+            # Reading CSV file
+            df = pd.read_csv(filepath_or_buffer=f"{OUT_FOLDER}/{config.getFilename()}.csv",
+                             sep=",",
+                             on_bad_lines='skip')
+            if self.castDatatime:
+                df["DateTime"] = pd.to_datetime(df["DateTime"], format="%m-%d-%Y %H:%M:%S.%f")
+            return df
+        return None
+
