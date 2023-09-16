@@ -1,3 +1,4 @@
+import datetime
 from .constants import *
 from typing import Union
 import requests
@@ -6,6 +7,14 @@ import gzip
 import shutil
 import glob
 import os
+
+
+def getNumberWeeksPerYear(_yr: int) -> int:
+    """ Function returning the number of weeks within a specified year
+    :param _yr: Year
+    :return: int
+    """
+    return int(datetime.date(year=_yr, month=12, day=29).isocalendar().week)
 
 
 class Config:
