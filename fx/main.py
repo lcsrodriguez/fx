@@ -46,12 +46,6 @@ class Config:
 
 
 class Data:
-    # TODO: Init with instrument + check
-    # TODO: Scraper and store g-zip into a folder
-        # In case of multiple files, lauch multiple threads
-    # TODO: Generate a new folder (hex) into /usr/tmp/
-    # TODO: Store g-zip and launch a process to unzip each archive
-    # Once unzipped, merging
     __slots__ = ("keepCSV", "keepGZIP", "castDatatime")
 
     def __init__(self,
@@ -89,8 +83,6 @@ class Data:
         q.columns = ["dt", *[f"b{sym}" for sym in OHLC], *[f"a{sym}" for sym in OHLC]]
         return q
 
-    # TODO: Add scraper for tick data
-    # Parameters: Week + Year
     # Scraper for 1 week
     # Scraper for a range (start -> end)
     # Scraper with string (YYYY-W to ...)
