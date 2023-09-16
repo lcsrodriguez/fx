@@ -11,7 +11,6 @@ import threading
 
 
 def getNumberWeeksPerYear(_yr: int) -> int:
-    """ Function returning the number of weeks within a specified year """
     return int(date(year=_yr, month=12, day=29).isocalendar().week)
 
 
@@ -92,6 +91,8 @@ class Data:
         else:  # dEnd["y"] > dStart["y"]
             pass
 
+        # TODO: Adding check on pair according to data type
+
         rY: list = list(
             range(dStart["y"], dEnd["y"] + 1)) if dEnd["y"] != dStart["y"] else [dStart["y"]]
         rW: list = list(
@@ -100,13 +101,19 @@ class Data:
             else list(range(dStart["nw"], dEnd["nw"] + 1))
 
         THREADS_POOL: list = []
-        THREADS_POOL_LIMIT: int = 15
-        isLooping: bool = True
+        THREADS_POOL_LIMIT: int = 12
+        d = []
         for y in rY:
             for w in rW:
+                if (y, w) in d:
+                    continue
                 if w < dStart["nw"] and y == dStart["y"]:
-                    break
+                    continue
+                if w > dEnd["nw"] and y == dEnd["y"]:
+                    continue
                 print(f"Processing week {y}-{w}") #, end=" ")
+                d.append((y, w))
+                """
                 if len(THREADS_POOL) <= THREADS_POOL_LIMIT:
                     print(f"Processing week {y}-{w}", end=" ")
                     t = threading.Thread(target=self.getTickData,
@@ -148,7 +155,7 @@ class Data:
     # Scraper with string (YYYY-W to ...)
     # Or scraper for a specific week given a specific day
 
-    def _getDataFrame(self, config: Config) -> pd.DataFrame:
+    def _getDataFrame(self, config: Config, p: bool = True) -> Union[pd.DataFrame, None]:
         if not isinstance(config, Config):
             raise Exception("Please enter a valid config.")
 
@@ -156,7 +163,10 @@ class Data:
         url: str = config.url
         req = requests.get(url=url, stream=True)
         if req.status_code // 100 != 2:
-            raise Exception("Error while requesting data")
+            print(req.status_code)
+        else:
+            print(req.status_code)
+            # raise Exception("Error while requesting data")
 
         # Downloading .csv.gz (archived file)
         with open(f"{OUT_FOLDER}/{config.getFilename()}.csv.gz", 'wb') as f:
