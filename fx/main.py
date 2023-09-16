@@ -7,13 +7,11 @@ import gzip
 import shutil
 import glob
 import os
+import threading
 
 
 def getNumberWeeksPerYear(_yr: int) -> int:
-    """ Function returning the number of weeks within a specified year
-    :param _yr: Year
-    :return: int
-    """
+    """ Function returning the number of weeks within a specified year """
     return int(date(year=_yr, month=12, day=29).isocalendar().week)
 
 
@@ -101,17 +99,33 @@ class Data:
             if dEnd["y"] > dStart["y"] \
             else list(range(dStart["nw"], dEnd["nw"] + 1))
 
+        THREADS_POOL: list = []
+        THREADS_POOL_LIMIT: int = 15
         isLooping: bool = True
         for y in rY:
             for w in rW:
-                print(f"Processing week {y}-{w}")
-
-                # TODO: Launch processing here (resources retrieval)
-
-                if (getNumberWeeksPerYear(y) == 53 and w == 53) or (getNumberWeeksPerYear(y) == 52 and w == 52):
+                if w < dStart["nw"] and y == dStart["y"]:
                     break
-                if w == rW[-1] and y == rY[-1]:
-                    break
+                print(f"Processing week {y}-{w}") #, end=" ")
+                if len(THREADS_POOL) <= THREADS_POOL_LIMIT:
+                    print(f"Processing week {y}-{w}", end=" ")
+                    t = threading.Thread(target=self.getTickData,
+                                         kwargs={
+                                             "pair": pair,
+                                             "yr": y,
+                                             "wk": w
+                                         },
+                                         name=f"Processing week {y}-{w}")
+                    THREADS_POOL.append(t)
+                    t.start()
+                else:
+                    print(f"Waiting for joining")
+                    _ = [t.join() for t in THREADS_POOL]
+                    THREADS_POOL = []
+                #if (getNumberWeeksPerYear(y) == 53 and w == 53) or (getNumberWeeksPerYear(y) == 52 and w == 52):
+                #    break
+                #if w == rW[-1] and y == rY[-1]:
+                #    break
             if not isLooping:
                 break
 
