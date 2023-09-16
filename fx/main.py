@@ -79,6 +79,42 @@ class Data:
     def __del__(self) -> None:
         self._handleIntemediaryFiles()
 
+    def getData(self,
+                pair: str,
+                start_dt: Union[str, datetime, date],
+                end_dt: Union[str, datetime, date],
+                _type: DataType = DataType.TICK,
+                **kwargs):
+        dStart: Dict[str, int] = {"y": int(start_dt.year), "nw": int(start_dt.isocalendar().week)} # y: year, nw: number of week
+        dEnd: Dict[str, int] = {"y": int(end_dt.year), "nw": int(end_dt.isocalendar().week)}
+
+        assert dEnd["y"] >= dStart["y"]
+        if dEnd["y"] == dStart["y"]:
+            assert dEnd["nw"] >= dStart["nw"]
+        else:  # dEnd["y"] > dStart["y"]
+            pass
+
+        rY: list = list(
+            range(dStart["y"], dEnd["y"] + 1)) if dEnd["y"] != dStart["y"] else [dStart["y"]]
+        rW: list = list(
+            range(dStart["nw"], getNumberWeeksPerYear(_yr=dStart["y"]) + 1)) + list(range(1, dEnd["nw"] + 1)) \
+            if dEnd["y"] > dStart["y"] \
+            else list(range(dStart["nw"], dEnd["nw"] + 1))
+
+        isLooping: bool = True
+        for y in rY:
+            for w in rW:
+                print(f"Processing week {y}-{w}")
+
+                # TODO: Launch processing here (resources retrieval)
+
+                if (getNumberWeeksPerYear(y) == 53 and w == 53) or (getNumberWeeksPerYear(y) == 52 and w == 52):
+                    break
+                if w == rW[-1] and y == rY[-1]:
+                    break
+            if not isLooping:
+                break
+
     def getTickData(self, pair: str, yr: Union[str, int], wk: Union[str, int]) -> pd.DataFrame:
         config_: Config = Config(pair, yr, wk, DataType.TICK)
         config_.setUrl()
