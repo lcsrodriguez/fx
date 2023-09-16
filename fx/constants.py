@@ -19,8 +19,8 @@ class Frequency:
 
 
 class DataType(Enum):
-    TICK: int = "TICK"
-    CANDLE: int = "CANDLE"
+    TICK: str = "TICK"
+    CANDLE: str = "CANDLE"
 
 
 url: dict = {
