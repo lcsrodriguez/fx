@@ -1,4 +1,4 @@
-import datetime
+from datetime import *
 from .constants import *
 from typing import Union
 import requests
@@ -14,7 +14,7 @@ def getNumberWeeksPerYear(_yr: int) -> int:
     :param _yr: Year
     :return: int
     """
-    return int(datetime.date(year=_yr, month=12, day=29).isocalendar().week)
+    return int(date(year=_yr, month=12, day=29).isocalendar().week)
 
 
 class Config:
