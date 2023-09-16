@@ -7,6 +7,7 @@ BASE_URL: str = "fxcorporate.com"
 OHLC: list = ["o", "h", "l", "c"]
 OUT_FOLDER: str = "out"
 
+
 class Frequency:
     MINUTE: str = "m1"
     HOUR: str = "H1"
