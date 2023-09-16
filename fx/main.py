@@ -24,7 +24,7 @@ class Config:
         self.url_: str = ""
         self.fq: Union[str, None] = None
         if "_fq" in kwargs:
-            if str(kwargs["_fq"]) not in list(Frequency.__annotations__.values()):
+            if str(kwargs["_fq"]) not in list(Frequency.__annotations__.keys()):
                 raise Exception("Invalid frequency provided")
             self.fq = kwargs["_fq"]
 

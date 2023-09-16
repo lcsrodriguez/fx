@@ -13,6 +13,10 @@ class Frequency:
     HOUR: str = "H1"
     DAY: str = "D1"
 
+    @staticmethod
+    def getAvailableFrequencies() -> list:
+        return list(Frequency.__annotations__.keys())
+
 
 class DataType(Enum):
     TICK: int = "TICK"
