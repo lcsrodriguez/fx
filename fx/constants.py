@@ -15,7 +15,7 @@ class Frequency:
 
     @staticmethod
     def getAvailableFrequencies() -> list:
-        return list(Frequency.__annotations__.keys())
+        return list([getattr(Frequency, f) for f in Frequency.__annotations__.keys()])
 
 
 class DataType(Enum):

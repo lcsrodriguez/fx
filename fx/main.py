@@ -29,8 +29,8 @@ class Config:
         self.type: DataType = _type
         self.url_: str = ""
         self.fq: Union[str, None] = None
-        if "_fq" in kwargs:
-            if str(kwargs["_fq"]) not in list(Frequency.__annotations__.keys()):
+        if "_fq" in kwargs and kwargs.get("_fq") is not None:
+            if str(kwargs["_fq"]) not in Frequency.getAvailableFrequencies():
                 raise Exception("Invalid frequency provided")
             self.fq = kwargs["_fq"]
 
@@ -86,7 +86,7 @@ class Data:
         dEnd: Dict[str, int] = {"y": int(end_dt.year), "nw": int(end_dt.isocalendar().week)}
         fq = None
         if "fq" in kwargs:
-            if str(kwargs["fq"]) not in list(Frequency.__annotations__.keys()):
+            if str(kwargs["fq"]) not in Frequency.getAvailableFrequencies():
                 raise Exception("Invalid frequency provided")
             fq = kwargs["fq"]
 
@@ -122,7 +122,7 @@ class Data:
                 d.append((y, w))
                 if len(THREADS_POOL) <= THREADS_POOL_LIMIT:
                     print(f"Processing week {y}-{w}", end=" ")
-                    t = threading.Thread(target=self.getTickData if type == DataType.TICK else self.getCandleData,
+                    t = threading.Thread(target=self.getTickData if _type == DataType.TICK else self.getCandleData,
                                          kwargs={
                                              "pair": pair,
                                              "yr": y,
@@ -138,7 +138,6 @@ class Data:
                     _ = [t.join() for t in THREADS_POOL]
                     THREADS_POOL = []
         _ = [t.join() for t in THREADS_POOL]  # Final clean
-        print(res)
 
         # Sorting
         e = [df[-1] for df in sorted(res, key=lambda x: (x[0, x[1]]))]
@@ -155,7 +154,7 @@ class Data:
         res.append((yr, wk, q))
         return q
 
-    def getCandleData(self, pair: str, yr: Union[str, int], wk: Union[str, int], fq: str, res: list = [], **kwargs) -> pd.DataFrame:
+    def getCandleData(self, pair: str, yr: Union[str, int], wk: Union[str, int], fq: str = Frequency.MINUTE, res: list = [], **kwargs) -> pd.DataFrame:
         config_: Config = Config(pair, yr, wk, DataType.CANDLE, _fq=fq)
         config_.setUrl()
         q = self._getDataFrame(config=config_)
