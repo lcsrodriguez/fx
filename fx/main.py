@@ -76,11 +76,11 @@ class Data:
 
     def _handleIntemediaryFiles(self) -> None:
         if not self.keepCSV:
-            fs = glob.glob(f"{OUT_FOLDER}/*.csv")
+            fs = glob.glob(f"{TMP_FOLDER}/*.csv")
             for f in fs:
                 os.remove(f)
         if not self.keepGZIP:
-            fs = glob.glob(f"{OUT_FOLDER}/*.gz")
+            fs = glob.glob(f"{TMP_FOLDER}/*.gz")
             for f in fs:
                 os.remove(f)
 
@@ -192,6 +192,8 @@ class Data:
         if not isinstance(config, Config):
             raise Exception("Please enter a valid config.")
 
+        # TODO: Check in-cache files (already downloaded)
+
         # Constructing the URL
         url: str = config.url
         req = requests.get(url=url, stream=True)
@@ -203,29 +205,29 @@ class Data:
             print(req.status_code)
 
         # Downloading .csv.gz (archived file)
-        with open(f"{OUT_FOLDER}/{config.getFilename()}.csv.gz", 'wb') as f:
+        with open(f"{TMP_FOLDER}/{config.getFilename()}.csv.gz", 'wb') as f:
             for chunk in req.raw.stream(1024, decode_content=False):
                 if chunk:
                     f.write(chunk)
 
         if p:
             # Unzipping .csv.gz into a .csv file (unprocessed CSV)
-            with gzip.open(f"{OUT_FOLDER}/{config.getFilename()}.csv.gz", 'rb') as f_in:
-                with open(f"{OUT_FOLDER}/{config.getFilename()}.csv", 'wb') as f_out:
+            with gzip.open(f"{TMP_FOLDER}/{config.getFilename()}.csv.gz", 'rb') as f_in:
+                with open(f"{TMP_FOLDER}/{config.getFilename()}.csv", 'wb') as f_out:
                     shutil.copyfileobj(f_in, f_out)
 
             # Reading unprocessed/binary CSV file
-            fi = open(f"{OUT_FOLDER}/{config.getFilename()}.csv", 'rb')
+            fi = open(f"{TMP_FOLDER}/{config.getFilename()}.csv", 'rb')
             data = fi.read()
             fi.close()
 
             # Processing + Writing CSV file
-            fo = open(f"{OUT_FOLDER}/{config.getFilename()}.csv", 'wb')
+            fo = open(f"{TMP_FOLDER}/{config.getFilename()}.csv", 'wb')
             fo.write(data.replace(b'\x00', b''))
             fo.close()
 
             # Reading CSV file
-            df = pd.read_csv(filepath_or_buffer=f"{OUT_FOLDER}/{config.getFilename()}.csv",
+            df = pd.read_csv(filepath_or_buffer=f"{TMP_FOLDER}/{config.getFilename()}.csv",
                              sep=",",
                              on_bad_lines='skip')
             if self.castDatatime:

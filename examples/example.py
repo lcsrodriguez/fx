@@ -4,7 +4,8 @@ if __name__ == "__main__":
         os.chdir("../")
     d = Data()
     d.keepCSV = False
-    d.keepGZIP = True
+    d.keepGZIP = False
+    d.outputCSV = True
 
     e = d.getData("EURUSD", datetime(2020, 1, 2), datetime(2020, 2, 5), _type=DataType.TICK, fq=Frequency.DAY)
     #a = d.getTickData("EURUSD", "2023", "1")

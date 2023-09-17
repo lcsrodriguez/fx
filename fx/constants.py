@@ -6,7 +6,7 @@ DATA_FILE_EXTENSION: str = "csv.gz"  # G-zip CSV
 BASE_URL: str = "fxcorporate.com"
 OHLC: list = ["o", "h", "l", "c"]
 OUT_FOLDER: str = "out"
-
+TMP_FOLDER: str = "tmp"
 
 class Frequency:
     MINUTE: str = "m1"
