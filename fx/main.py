@@ -178,7 +178,7 @@ class Data:
         req = requests.get(url=url, stream=True)
         if req.status_code // 100 != 2:
             print(req.status_code)
-            return pd.DataFrame(columns=range(3))
+            return pd.DataFrame(columns=range(3 if config.type == DataType.TICK else 9))
             # raise Exception("Error while requesting data")
         else:
             print(req.status_code)
