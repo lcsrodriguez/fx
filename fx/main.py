@@ -14,6 +14,13 @@ def getNumberWeeksPerYear(_yr: int) -> int:
     return int(date(year=_yr, month=12, day=29).isocalendar().week)
 
 
+def isWeekEnd(dt: Union[date, datetime, str]) -> bool:
+    if isinstance(dt, date) or isinstance(dt, datetime):
+        return dt.weekday() in [5, 6]
+    elif isinstance(dt, str):
+        return date.fromisoformat(dt).weekday() in [5, 6]
+
+
 class Config:
     __slots__ = ("pair", "yr", "wk", "type", "url_", "fq")
 
