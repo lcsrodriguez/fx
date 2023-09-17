@@ -84,6 +84,11 @@ class Data:
                 **kwargs):
         dStart: Dict[str, int] = {"y": int(start_dt.year), "nw": int(start_dt.isocalendar().week)} # y: year, nw: number of week
         dEnd: Dict[str, int] = {"y": int(end_dt.year), "nw": int(end_dt.isocalendar().week)}
+        fq = None
+        if "fq" in kwargs:
+            if str(kwargs["fq"]) not in list(Frequency.__annotations__.keys()):
+                raise Exception("Invalid frequency provided")
+            fq = kwargs["fq"]
 
         assert dEnd["y"] >= dStart["y"]
         if dEnd["y"] == dStart["y"]:
