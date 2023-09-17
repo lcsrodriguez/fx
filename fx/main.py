@@ -60,15 +60,19 @@ class Config:
 
 
 class Data:
-    __slots__ = ("keepCSV", "keepGZIP", "castDatatime")
+    __slots__ = ("keepCSV", "keepGZIP", "castDatatime", "outputCSV", "outputPQT")
 
     def __init__(self,
                  _keepCSV: bool = True,
                  _keepGZIP: bool = False,
-                 _castDatetime: bool = False) -> None:
+                 _castDatetime: bool = False,
+                 _outputCSV: bool = False,
+                 _outputPQT: bool = True) -> None:
         self.keepCSV: bool = _keepCSV
         self.keepGZIP: bool = _keepGZIP
         self.castDatatime: bool = _castDatetime
+        self.outputCSV: bool = _outputCSV
+        self.outputPQT: bool = _outputPQT
 
     def _handleIntemediaryFiles(self) -> None:
         if not self.keepCSV:
@@ -152,7 +156,20 @@ class Data:
         dfs = [df[-1] for df in sorted(res, key=lambda x: (x[0], x[1]))]
         dfs = [df.set_index("dt") for df in dfs]
         fdf: pd.DataFrame = pd.concat(objs=dfs, axis=0)  # Axis 0 --> Rows
-        # TODO: Convert to parquet and save on-disk
+
+        if self.castDatatime:
+            fdf["dt"] = pd.to_datetime(fdf["dt"], format="%m-%d-%Y %H:%M:%S.%f")
+
+        output_filename: str = f"out_{start_dt:%m-%d-%Y_%H:%M:%S.%f}_{end_dt:%m-%d-%Y_%H:%M:%S.%f}"
+        if self.outputCSV:
+            print("writing csv")
+            fdf.to_csv(f"{OUT_FOLDER}/csv/{output_filename}.csv")
+        if self.outputPQT:
+            import pyarrow as pa
+            import pyarrow.parquet as pq
+            print("Writing pqt")
+            table = pa.Table.from_pandas(df=fdf)
+            pq.write_table(table=table, where=f"{OUT_FOLDER}/parquet/{output_filename}.parquet")
         return fdf
 
     def getTickData(self, pair: str, yr: Union[str, int], wk: Union[str, int], res: list = [], **kwargs) -> pd.DataFrame:
