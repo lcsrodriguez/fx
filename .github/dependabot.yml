@@ -8,4 +8,6 @@ updates:
   - package-ecosystem: "pip" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
-      interval: "weekly"
+      interval: "daily"
+    # Allow up to 20 open pull requests for pip dependencies
+    open-pull-requests-limit: 20
