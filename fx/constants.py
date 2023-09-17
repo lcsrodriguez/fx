@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from datetime import datetime
 from enum import Enum
 

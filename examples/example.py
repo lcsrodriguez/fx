@@ -6,6 +6,7 @@ if __name__ == "__main__":
     d.keepCSV = False
     d.keepGZIP = True
 
-    e = d.getData("EURUSD", datetime(2020, 1, 2), datetime(2020, 11, 2))
+    e = d.getData("EURUSD", datetime(2020, 1, 2), datetime(2020, 6, 2))
     #a = d.getTickData("EURUSD", "2023", "1")
+    #print(a)
     #b = d.getCandleData("EURUSD", "2023", "2", Frequency.MINUTE) 21 40

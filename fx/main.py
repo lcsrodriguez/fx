@@ -103,6 +103,7 @@ class Data:
         THREADS_POOL: list = []
         THREADS_POOL_LIMIT: int = 12
         d = []
+        res: Union[List[Tuple[int, int, pd.DataFrame]], List[None]] = [] # [None] * (len(rY) * len(rW))
         for y in rY:
             for w in rW:
                 if (y, w) in d:
@@ -115,11 +116,13 @@ class Data:
                 d.append((y, w))
                 if len(THREADS_POOL) <= THREADS_POOL_LIMIT:
                     print(f"Processing week {y}-{w}", end=" ")
-                    t = threading.Thread(target=self.getTickData,
+                    t = threading.Thread(target=self.getTickData if type == DataType.TICK else self.getCandleData,
                                          kwargs={
                                              "pair": pair,
                                              "yr": y,
-                                             "wk": w
+                                             "wk": w,
+                                             "res": res,
+                                             "fq": fq
                                          },
                                          name=f"Processing week {y}-{w}")
                     THREADS_POOL.append(t)
@@ -128,25 +131,31 @@ class Data:
                     print(f"Waiting for joining")
                     _ = [t.join() for t in THREADS_POOL]
                     THREADS_POOL = []
+        _ = [t.join() for t in THREADS_POOL]  # Final clean
+        print(res)
 
-    def getTickData(self, pair: str, yr: Union[str, int], wk: Union[str, int]) -> pd.DataFrame:
+        # Sorting
+        e = [df[-1] for df in sorted(res, key=lambda x: (x[0, x[1]]))]
+
+        # TODO: Check FOREX hours + weekends !
+        # TODO: Merge each dataframe from first to last + Check gaps
+        # TODO: Convert to parquet and save on-disk
+
+    def getTickData(self, pair: str, yr: Union[str, int], wk: Union[str, int], res: list = [], **kwargs) -> pd.DataFrame:
         config_: Config = Config(pair, yr, wk, DataType.TICK)
         config_.setUrl()
         q = self._getDataFrame(config=config_)
-        #q.columns = ["dt", "b", "a"]
-        return q  # (df, y, k) to be returned to store in results variable shared by all threads then sorted to be merged
+        q.columns = ["dt", "b", "a"]
+        res.append((yr, wk, q))
+        return q
 
-    def getCandleData(self, pair: str, yr: Union[str, int], wk: Union[str, int], fq: str) -> pd.DataFrame:
+    def getCandleData(self, pair: str, yr: Union[str, int], wk: Union[str, int], fq: str, res: list = [], **kwargs) -> pd.DataFrame:
         config_: Config = Config(pair, yr, wk, DataType.CANDLE, _fq=fq)
         config_.setUrl()
         q = self._getDataFrame(config=config_)
         q.columns = ["dt", *[f"b{sym}" for sym in OHLC], *[f"a{sym}" for sym in OHLC]]
+        res.append((yr, wk, q))
         return q
-
-    # Scraper for 1 week
-    # Scraper for a range (start -> end)
-    # Scraper with string (YYYY-W to ...)
-    # Or scraper for a specific week given a specific day
 
     def _getDataFrame(self, config: Config, p: bool = True) -> Union[pd.DataFrame, None]:
         if not isinstance(config, Config):
