@@ -91,7 +91,8 @@ class Data:
         else:  # dEnd["y"] > dStart["y"]
             pass
 
-        # TODO: Adding check on pair according to data type
+        if pair not in AVAILABLE_SYMBOLS[_type]:
+            raise Exception(f"Pair {pair} not available for requested type of data ({_type})")
 
         rY: list = list(
             range(dStart["y"], dEnd["y"] + 1)) if dEnd["y"] != dStart["y"] else [dStart["y"]]
