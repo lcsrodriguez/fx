@@ -24,6 +24,33 @@ One may either select to retrieve tick-by-tick or candle data for several freque
  </tr>
 </table>
 
+## Getting started
+
+```
+cd examples/
+python3 examples.py
+```
+
+## Architecture
+
+```
+.
+├── LICENSE
+├── README.md
+├── examples/
+│   └── example.py
+├── fx/
+│   ├── __init__.py
+│   ├── constants.py
+│   └── main.py
+├── out/
+│   ├── csv/
+│   └── parquet/
+├── requirements.txt
+├── setup.py
+└── tmp/
+```
+
 ## License
 
 
