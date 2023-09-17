@@ -93,7 +93,15 @@ class Data:
                 end_dt: Union[str, datetime, date],
                 _type: DataType = DataType.TICK,
                 **kwargs):
-        # TODO: Check FOREX hours + weekends !
+        if isinstance(start_dt, str):
+            start_dt = date.fromisoformat(start_dt)
+        if isinstance(end_dt, str):
+            end_dt = date.fromisoformat(end_dt)
+
+        if isWeekEnd(start_dt):
+            raise Exception("Start date is weekend.")
+        if isWeekEnd(end_dt):
+            raise Exception("End date is weekend.")
 
         dStart: Dict[str, int] = {"y": int(start_dt.year), "nw": int(start_dt.isocalendar().week)} # y: year, nw: number of week
         dEnd: Dict[str, int] = {"y": int(end_dt.year), "nw": int(end_dt.isocalendar().week)}
@@ -192,7 +200,7 @@ class Data:
         if not isinstance(config, Config):
             raise Exception("Please enter a valid config.")
 
-        # TODO: Check in-cache files (already downloaded)
+        # TODO: Check in-cache files (already downloaded) using glob
 
         # Constructing the URL
         url: str = config.url
