@@ -89,6 +89,8 @@ class Data:
                 end_dt: Union[str, datetime, date],
                 _type: DataType = DataType.TICK,
                 **kwargs):
+        # TODO: Check FOREX hours + weekends !
+
         dStart: Dict[str, int] = {"y": int(start_dt.year), "nw": int(start_dt.isocalendar().week)} # y: year, nw: number of week
         dEnd: Dict[str, int] = {"y": int(end_dt.year), "nw": int(end_dt.isocalendar().week)}
         fq = None
@@ -147,11 +149,11 @@ class Data:
         _ = [t.join() for t in THREADS_POOL]  # Final clean
 
         # Sorting
-        e = [df[-1] for df in sorted(res, key=lambda x: (x[0, x[1]]))]
-
-        # TODO: Check FOREX hours + weekends !
-        # TODO: Merge each dataframe from first to last + Check gaps
+        dfs = [df[-1] for df in sorted(res, key=lambda x: (x[0], x[1]))]
+        dfs = [df.set_index("dt") for df in dfs]
+        fdf: pd.DataFrame = pd.concat(objs=dfs, axis=0)  # Axis 0 --> Rows
         # TODO: Convert to parquet and save on-disk
+        return fdf
 
     def getTickData(self, pair: str, yr: Union[str, int], wk: Union[str, int], res: list = [], **kwargs) -> pd.DataFrame:
         config_: Config = Config(pair, yr, wk, DataType.TICK)
@@ -214,3 +216,28 @@ class Data:
             return df
         return None
 
+
+class RetrievalThread(threading.Thread):
+    POOL_SIZE: int = 5
+    POOL_COUNTER: int = 0
+
+    def __init__(self, name: str, url: str, dataClassInstance: Data) -> None:
+        super(threading.Thread).__init__()
+        RetrievalThread.POOL_COUNTER += 1
+        self.name = name
+        self.url = url
+        self.dataClassInstance: Data = dataClassInstance
+
+    def start(self) -> None:
+        print(f"Starting {self.url}")
+        threading.Thread(name=self.name,
+                         target=self.dataClassInstance.getData,
+                         kwargs={
+
+                         })
+        pass
+
+    def join(self) -> None:
+        print(f"Joining {self.url}")
+        RetrievalThread.POOL_COUNTER += 1
+        super(threading.Thread).join()
