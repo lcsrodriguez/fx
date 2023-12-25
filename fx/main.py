@@ -1,78 +1,21 @@
-from datetime import *
-from .constants import *
-from typing import Union
-import requests
-import pandas as pd
-import gzip
-import shutil
-import glob
-import os
-import threading
-
-
-def getNumberWeeksPerYear(_yr: int) -> int:
-    return int(date(year=_yr, month=12, day=29).isocalendar().week)
-
-
-def isWeekEnd(dt: Union[date, datetime, str]) -> bool:
-    if isinstance(dt, date) or isinstance(dt, datetime):
-        return dt.weekday() in [5, 6]
-    elif isinstance(dt, str):
-        return date.fromisoformat(dt).weekday() in [5, 6]
-
-
-class Config:
-    __slots__ = ("pair", "yr", "wk", "type", "url_", "fq")
-
-    def __init__(self,
-                 _pair: str,
-                 _yr: Union[str, int],
-                 _wk: Union[str, int],
-                 _type: DataType = DataType.TICK,
-                 **kwargs) -> None:
-        self.pair: str = _pair
-        self.yr: Union[str, int] = _yr
-        self.wk: Union[str, int] = _wk
-        self.type: DataType = _type
-        self.url_: str = ""
-        self.fq: Union[str, None] = None
-        if "_fq" in kwargs and kwargs.get("_fq") is not None:
-            if str(kwargs["_fq"]) not in Frequency.getAvailableFrequencies():
-                raise Exception("Invalid frequency provided")
-            self.fq = kwargs["_fq"]
-
-    def setUrl(self) -> None:
-        dom_: str = url[self.type]
-        if self.type == DataType.TICK:
-            self.url_: str = f"https://{dom_}/{self.pair}/{self.yr}/{self.wk}.{DATA_FILE_EXTENSION}"
-        elif self.type == DataType.CANDLE and self.fq is not None:
-            self.url_: str = f"https://{dom_}/{self.fq}/{self.pair}/{self.yr}/{self.wk}.{DATA_FILE_EXTENSION}"
-
-    def getUrl(self) -> str:
-        return self.url_
-
-    url = property(fget=getUrl, fset=setUrl)
-
-    def getFilename(self) -> str:
-        if self.type == DataType.CANDLE:
-            return f"{self.type.value}_{self.pair}_{self.fq}_{self.yr}_{self.wk}"
-        return f"{self.type.value}_{self.pair}_{self.yr}_{self.wk}"
+from .utils import *
+from .Config import *
 
 
 class Data:
     __slots__ = ("keepCSV", "keepGZIP", "castDatatime", "outputCSV", "outputPQT")
 
     def __init__(self,
-                 _keepCSV: bool = True,
-                 _keepGZIP: bool = False,
-                 _castDatetime: bool = False,
-                 _outputCSV: bool = False,
-                 _outputPQT: bool = True) -> None:
-        self.keepCSV: bool = _keepCSV
-        self.keepGZIP: bool = _keepGZIP
-        self.castDatatime: bool = _castDatetime
-        self.outputCSV: bool = _outputCSV
-        self.outputPQT: bool = _outputPQT
+                 keepCSV: bool = True,
+                 keepGZIP: bool = False,
+                 castDatetime: bool = False,
+                 outputCSV: bool = False,
+                 outputPQT: bool = True) -> None:
+        self.keepCSV: bool = keepCSV
+        self.keepGZIP: bool = keepGZIP
+        self.castDatatime: bool = castDatetime
+        self.outputCSV: bool = outputCSV
+        self.outputPQT: bool = outputPQT
 
     def _handleIntemediaryFiles(self) -> None:
         if not self.keepCSV:
