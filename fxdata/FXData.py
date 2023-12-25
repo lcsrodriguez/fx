@@ -20,8 +20,11 @@ class FXData:
         self.outputPQT: bool = outputPQT
 
         # TODO: Logging (warning for cast datetime)
-        # TODO: Check (create otherwise) tmp/ and out/ folders
         # TODO: Select the data for the given daterange
+        if self.cwd[-1] == "/": self.cwd = self.cwd[: -1]
+        if not os.path.exists(f"{self.cwd}/{TMP_FOLDER}"): os.makedirs(f"{self.cwd}/{TMP_FOLDER}")
+        if not os.path.exists(f"{self.cwd}/{OUT_FOLDER}/csv"): os.makedirs(f"{self.cwd}/{OUT_FOLDER}/csv")
+        if not os.path.exists(f"{self.cwd}/{OUT_FOLDER}/parquet"): os.makedirs(f"{self.cwd}/{OUT_FOLDER}/parquet")
 
     def _handleIntemediaryFiles(self) -> None:
         if not self.keepCSV:
