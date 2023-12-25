@@ -34,21 +34,27 @@ One may either select to retrieve tick-by-tick or candle data for several freque
 
 ```
 cd examples/
-python3 examples.py
+python3 main.py
 ```
 
 ## Architecture
 
 ```
-.
+./
 ├── LICENSE
+├── Makefile
 ├── README.md
+├── docs/
+│   └── ROADMAP.md
 ├── examples/
-│   └── example.py
-├── fx/
+│   ├── main.ipynb
+│   └── main.py
+├── fxdata/
+│   ├── Config.py
+│   ├── FXData.py
 │   ├── __init__.py
 │   ├── constants.py
-│   └── main.py
+│   └── utils.py
 ├── out/
 │   ├── csv/
 │   └── parquet/
@@ -57,7 +63,7 @@ python3 examples.py
 └── tmp/
 ```
 
-## License
+## License & Credits
 
 
 [MIT](LICENSE)
