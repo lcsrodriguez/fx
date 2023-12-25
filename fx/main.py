@@ -242,29 +242,3 @@ class Data:
                 df["DateTime"] = pd.to_datetime(df["DateTime"], format="%m-%d-%Y %H:%M:%S.%f")
             return df
         return None
-
-
-class RetrievalThread(threading.Thread):
-    POOL_SIZE: int = 5
-    POOL_COUNTER: int = 0
-
-    def __init__(self, name: str, url: str, dataClassInstance: Data) -> None:
-        super(threading.Thread).__init__()
-        RetrievalThread.POOL_COUNTER += 1
-        self.name = name
-        self.url = url
-        self.dataClassInstance: Data = dataClassInstance
-
-    def start(self) -> None:
-        print(f"Starting {self.url}")
-        threading.Thread(name=self.name,
-                         target=self.dataClassInstance.getData,
-                         kwargs={
-
-                         })
-        pass
-
-    def join(self) -> None:
-        print(f"Joining {self.url}")
-        RetrievalThread.POOL_COUNTER += 1
-        super(threading.Thread).join()
