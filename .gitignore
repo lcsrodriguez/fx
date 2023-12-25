@@ -5,3 +5,5 @@
 *.gz
 *.pqt
 *.parquet
+*/__pycache__/
+__pycache__/
