@@ -1,4 +1,3 @@
-from .utils import *
 from .Config import *
 
 
@@ -71,7 +70,6 @@ class Data:
             else list(range(dStart["nw"], dEnd["nw"] + 1))
 
         THREADS_POOL: list = []
-        THREADS_POOL_LIMIT: int = 12
         d = []
         res: Union[List[Tuple[int, int, pd.DataFrame]], List[None]] = [] # [None] * (len(rY) * len(rW))
         for y in rY:
@@ -98,7 +96,7 @@ class Data:
                     THREADS_POOL.append(t)
                     t.start()
                 else:
-                    print(f"Waiting for joining")
+                    #print(f"Waiting for joining")
                     _ = [t.join() for t in THREADS_POOL]
                     THREADS_POOL = []
         _ = [t.join() for t in THREADS_POOL]  # Final clean
@@ -113,12 +111,12 @@ class Data:
 
         output_filename: str = f"out_{start_dt:%m-%d-%Y_%H:%M:%S.%f}_{end_dt:%m-%d-%Y_%H:%M:%S.%f}"
         if self.outputCSV:
-            print("writing csv")
+            #print("writing csv")
             fdf.to_csv(f"{OUT_FOLDER}/csv/{output_filename}.csv")
         if self.outputPQT:
             import pyarrow as pa
             import pyarrow.parquet as pq
-            print("Writing pqt")
+            #print("Writing pqt")
             table = pa.Table.from_pandas(df=fdf)
             pq.write_table(table=table, where=f"{OUT_FOLDER}/parquet/{output_filename}.parquet")
         return fdf
@@ -149,7 +147,7 @@ class Data:
         url: str = config.url
         req = requests.get(url=url, stream=True)
         if req.status_code // 100 != 2:
-            print(req.status_code)
+            #print(req.status_code)
             return pd.DataFrame(columns=range(3 if config.type == DataType.TICK else 9))
             # raise Exception("Error while requesting data")
         else:
