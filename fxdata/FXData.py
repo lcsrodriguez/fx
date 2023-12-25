@@ -19,6 +19,10 @@ class FXData:
         self.outputCSV: bool = outputCSV
         self.outputPQT: bool = outputPQT
 
+        # TODO: Logging (warning for cast datetime)
+        # TODO: Check (create otherwise) tmp/ and out/ folders
+        # TODO: Select the data for the given daterange
+
     def _handleIntemediaryFiles(self) -> None:
         if not self.keepCSV:
             fs = glob.glob(f"{self.cwd}/{TMP_FOLDER}/*.csv")
