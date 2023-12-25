@@ -1,8 +1,9 @@
 from .Config import *
 
 
-class Data:
-    __slots__ = ("keepCSV", "keepGZIP", "castDatatime", "outputCSV", "outputPQT")
+class FXData:
+    __class__: str = "FXData"
+    __slots__: dict = ("keepCSV", "keepGZIP", "castDatatime", "outputCSV", "outputPQT")
 
     def __init__(self,
                  keepCSV: bool = True,

@@ -1,1 +1,2 @@
-from .main import *
+from .Config import *
+from .FXData import *
