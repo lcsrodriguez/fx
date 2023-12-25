@@ -9,12 +9,12 @@ class Config:
                  _pair: str,
                  _yr: Union[str, int],
                  _wk: Union[str, int],
-                 _type: DataType = DataType.TICK,
+                 dataType: DataType = DataType.TICK,
                  **kwargs) -> None:
         self.pair: str = _pair
         self.yr: Union[str, int] = _yr
         self.wk: Union[str, int] = _wk
-        self.type: DataType = _type
+        self.type: DataType = dataType
         self.url_: str = ""
         self.fq: Union[str, None] = None
         if "_fq" in kwargs and kwargs.get("_fq") is not None:
