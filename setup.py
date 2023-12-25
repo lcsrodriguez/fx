@@ -1,36 +1,38 @@
-from setuptools import setup, find_packages
+import setuptools
+from fxdata import (__version__,
+                    __author__,
+                    __package_name__)
 
-# Super variables
-VERSION = "1.0.0"
-DESCRIPTION = "fx - FX tick/candle data collector"
+with open("README.md", "r") as f:
+    long_description = f.read()
 
-# Description
-with open(file="README.md", mode="r") as f:
-    LONG_DESCRIPTION: str = f.read()
-print(LONG_DESCRIPTION)
+PYTHON_MODULE_NAME: str = __package_name__
+REQUIREMENTS = [i.strip() for i in open("requirements.txt").readlines()]
 
-# Setting up the package
-setup(
-    # the name must match the folder name 'verysimplemodule'
-    name="fx",
-    version=VERSION,
-    author="Lucas RODRIGUEZ",
-    author_email="<>",
-    maintainer="Lucas RODRIGUEZ",
-    maintainer_email="<>",
+
+setuptools.setup(
+    name=PYTHON_MODULE_NAME,
+    py_modules=[PYTHON_MODULE_NAME],
+    version=__version__,
+    author=__author__,
+    author_email="lcsrodriguez@pm.me",
+    license="MIT",
+    maintainer=__author__,
+    maintainer_email="lcsrodriguez@pm.me",
     url="https://github.com/lcsrodriguez/fx",
-    license="MIT License",
-    description=DESCRIPTION,
-    long_description=LONG_DESCRIPTION,
-    packages=find_packages(),
-    install_requires=[],  # Add any additional packages that needs to be installed along with your package. Eg: 'caer'
-    keywords=["python", "FX prices", "fx"],
+    description="FX high-frequency tick/candle historical data scraping tool",
+    long_description=long_description,
+    packages=setuptools.find_packages(),
     classifiers=[
-        "Development Status :: 3 - Alpha",
-        "Intended Audience :: Education",
-        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
-        "Operating System :: MacOS :: MacOS X",
-        "Operating System :: Microsoft :: Windows",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
     ],
+    package_dir={'': '.'},
+    extras_require={
+        "interactive": ["notebook==7.0.6"],
+    },
+    install_requires=REQUIREMENTS,  # [],
+    python_requires='>=3.10',
+    keywords=["python", "FX prices", "fx", "tick data"],
 )
