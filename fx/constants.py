@@ -51,3 +51,5 @@ AVAILABLE_SYMBOLS: Dict[DataType, List[str]] = {
         "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD",
         "USDCAD", "USDCHF", "USDJPY"]
 }
+
+THREADS_POOL_LIMIT: int = 12
