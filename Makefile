@@ -3,8 +3,9 @@ all:
 	@python3 -m pip3 install -r requirements.txt
 
 init:
-	@echo "Creating output folders..."
+	@echo "Creating folders..."
 	@mkdir -p "out"
+	@mkdir -p "tmp"
 	@mkdir -p "out/csv"
 	@mkdir -p "out/parquet"
 
