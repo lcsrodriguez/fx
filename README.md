@@ -5,6 +5,10 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/lcsrodriguez/fx)  &nbsp;![python version | 3.10+](https://img.shields.io/badge/python%20version-3.10+-magenta) &nbsp; [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 ![](https://img.shields.io/badge/Dependabot-enabled-blue)
+[![CodeQL](https://github.com/lcsrodriguez/fx/actions/workflows/codeql.yml/badge.svg)](https://github.com/lcsrodriguez/fx/actions/workflows/codeql.yml)
+
+**UPDATE**: A *Cloudflare Zero Trust* security portal has been set up on the external data provider endpoints for *tick data*.
+
 
 ## Overview
 
